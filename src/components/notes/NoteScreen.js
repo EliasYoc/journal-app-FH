@@ -1,6 +1,10 @@
 import { useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { activeNote, selectActive } from "../../features/note/noteSlice";
+import {
+  activeNote,
+  deleteNote,
+  selectActive,
+} from "../../features/note/noteSlice";
 import { useForm } from "../../hooks/useForm";
 import NotesAppBarr from "./NotesAppBarr";
 
@@ -21,6 +25,9 @@ const NoteScreen = () => {
     dispatch(activeNote({ id: formValues.id, ...formValues }));
   }, [formValues, dispatch]);
   // console.log("idNote", activeNote.id);
+  const handleDelete = () => {
+    dispatch(deleteNote(activedNote.id));
+  };
   return (
     <div className="notes__main-content">
       <NotesAppBarr />
@@ -48,6 +55,9 @@ const NoteScreen = () => {
           </div>
         )}
       </div>
+      <button className="btn btn-danger" onClick={handleDelete}>
+        Borrar
+      </button>
     </div>
   );
 };

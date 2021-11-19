@@ -8,6 +8,7 @@ import {
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import Swal from "sweetalert2";
 import { auth, googleProvider } from "../../firebase/firebaseConfig";
+import { logoutCleanNotes } from "../note/noteSlice";
 import { setUiLoading } from "../ui/uiSlice";
 const initialState = {};
 export const loginUser = createAsyncThunk(
@@ -53,13 +54,17 @@ export const registerUser = createAsyncThunk(
     }
   }
 );
-export const logout = createAsyncThunk("auth/logout", async () => {
-  try {
-    await signOut(auth);
-  } catch (error) {
-    console.log(error);
+export const logout = createAsyncThunk(
+  "auth/logout",
+  async (_, { dispatch }) => {
+    try {
+      await signOut(auth);
+      dispatch(logoutCleanNotes());
+    } catch (error) {
+      console.log(error);
+    }
   }
-});
+);
 
 const authSlice = createSlice({
   name: "auth",

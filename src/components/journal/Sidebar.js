@@ -1,4 +1,3 @@
-import { useEffect, useLayoutEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { logout, selectName } from "../../features/auth/authSlice";
 import { startNewNote } from "../../features/note/noteSlice";

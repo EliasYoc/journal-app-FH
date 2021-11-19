@@ -1,6 +1,7 @@
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   getDocs,
   updateDoc,
@@ -83,6 +84,18 @@ export const startUploading = createAsyncThunk(
     }
   }
 );
+export const deleteNote = createAsyncThunk(
+  "notes/deleteNote",
+  async (id, { getState }) => {
+    try {
+      const { uid } = getState().auth;
+      await deleteDoc(doc(db, uid, "journal", "notes", id));
+      return id;
+    } catch (err) {
+      console.log("error en 'deleteNote'", err);
+    }
+  }
+);
 const initialState = {
   notes: [],
   activeNote: null,
@@ -98,12 +111,14 @@ const noteSlice = createSlice({
       };
     },
     urlFileNote: () => {},
-    deleteNote: () => {},
-    logoutCleanNote: () => {},
+    logoutCleanNotes: () => {
+      return { ...initialState };
+    },
   },
   extraReducers: {
     [startNewNote.fulfilled]: (state, action) => ({
       ...state,
+      notes: [...state.notes, { ...action.payload }],
       activeNote: { ...action.payload },
     }),
     [loadNotes.fulfilled]: (state, action) => ({
@@ -119,10 +134,17 @@ const noteSlice = createSlice({
         ),
       };
     },
+    [deleteNote.fulfilled]: (state, action) => {
+      return {
+        ...state,
+        activeNote: null,
+        notes: state.notes.filter((note) => note.id !== action.payload),
+      };
+    },
   },
 });
 
-export const { activeNote } = noteSlice.actions;
+export const { activeNote, logoutCleanNotes } = noteSlice.actions;
 export const selectNotes = (state) => state.notes.notes;
 export const selectActive = (state) => state.notes.activeNote;
 export default noteSlice.reducer;
