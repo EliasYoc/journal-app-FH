@@ -4,8 +4,11 @@ import { useDispatch } from "react-redux";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import JournalScreen from "../components/journal/JournalScreen";
 import { normalLogin } from "../features/auth/authSlice";
+import { loadNotes } from "../features/note/noteSlice";
 import { auth } from "../firebase/firebaseConfig";
 import AuthRouter from "./AuthRouter";
+import PrivateRoute from "./PrivateRoute";
+import PublicRoute from "./PublicRoute";
 
 const AppRouter = () => {
   const dispatch = useDispatch();
@@ -13,11 +16,11 @@ const AppRouter = () => {
   const [isAuth, setIsAuth] = useState(false);
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
-      console.log("appRouter", user);
       if (user) {
         const { displayName, uid } = user;
         dispatch(normalLogin({ displayName, uid }));
         setIsAuth(true);
+        dispatch(loadNotes({ uid }));
       } else {
         setIsAuth(false);
       }
@@ -29,8 +32,13 @@ const AppRouter = () => {
     <Router>
       <>
         <Switch>
-          <Route path="/auth" component={AuthRouter} />
-          <Route exact path="/" component={JournalScreen} />
+          <PublicRoute isAuth={isAuth} path="/auth" component={AuthRouter} />
+          <PrivateRoute
+            exact
+            isAuth={isAuth}
+            path="/"
+            component={JournalScreen}
+          />
           <Route path="*" component={() => <h3>Not found</h3>} />
         </Switch>
       </>

@@ -45,6 +45,8 @@
 }
 
 .notes__image img {
+  width: 200px;
+  object-fit: contain;
   box-shadow: 5px 5px $dark-grey;
   height: 150px;
 }

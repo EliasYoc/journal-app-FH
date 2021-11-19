@@ -16,7 +16,6 @@ const uiSlice = createSlice({
       return { ...state, msgError: null };
     },
     setUiLoading: (state, action) => {
-      console.log("loading", action);
       return { ...state, loading: action.payload };
     },
   },
